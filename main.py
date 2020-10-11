@@ -38,7 +38,7 @@ def cut(rows, stop_word_list, case):
 
 
 if __name__ == '__main__':
-    with open('report10-07_14_08.csv') as csvfile:
+    with open('CS106_CS249_Student_Content.csv') as csvfile:
         rows = csv.DictReader(csvfile)
         with open('stop_word_corex.txt') as file:
             All_sw = file.read()
@@ -79,5 +79,5 @@ if __name__ == '__main__':
                 print(topic_str)
 
             df1 = pd.DataFrame(topic_model.p_y_given_x)
-            df1.to_csv('report'+dt_string+'.csv', index=True)
+            df1.to_csv('.\\report\\report'+dt_string+'.csv', index=True)
 
