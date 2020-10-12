@@ -5,14 +5,17 @@ from sklearn.feature_extraction.text import CountVectorizer
 from corextopic import corextopic as ct
 import _pickle as cPickle
 from datetime import datetime
+import sys
 # datetime object containing current date and time
 now = datetime.now()
 # dd/mm/YY H:M:S
 dt_string = now.strftime("%m-%d_%H_%M")
 print("date and time =", dt_string)
+print ('Argument List:', str(sys.argv))
 
-N_topic = 5
-
+N_topic = int(sys.argv[1])
+source_file = sys.argv[2]
+case = sys.argv[3]
 
 def remove_punctuation(line):
     # rule = re.compile(u"[^\u4e00-\u9fa5, \u0041-\u005a, \u0060-\u007a]")  # 留下中文和英文
@@ -38,12 +41,11 @@ def cut(rows, stop_word_list, case):
 
 
 if __name__ == '__main__':
-    with open('CS106_CS249_Student_Content.csv') as csvfile:
+    with open(source_file) as csvfile:
         rows = csv.DictReader(csvfile)
         with open('stop_word_corex.txt') as file:
             All_sw = file.read()
             stop_word_list = All_sw.splitlines()
-        case = input('1.重新斷詞 or 2.讀取已斷詞檔案(data_source或stop_words有更新需重新斷詞):')
         if case == '1':
             cut_case = input('1.jieba or 2.monpa')
             words_list, Label = cut(rows, stop_word_list, cut_case)
@@ -80,4 +82,3 @@ if __name__ == '__main__':
 
             df1 = pd.DataFrame(topic_model.p_y_given_x)
             df1.to_csv('.\\report\\report'+dt_string+'.csv', index=True)
-
