@@ -13,7 +13,7 @@ dt_string = now.strftime("%m-%d_%H_%M")
 print("date and time =", dt_string)
 print ('Argument List:', str(sys.argv))
 
-'''參數1:分幾類  參數2:source data  參數3:1.'''
+'''參數1:分幾類  參數2:source data  參數3:1.重新斷詞or2.讀斷詞檔'''
 N_topic = int(sys.argv[1])
 source_file = sys.argv[2]
 Case = sys.argv[3]
@@ -60,9 +60,7 @@ if __name__ == '__main__':
             cPickle.dump(words_list, open('words_list_'+cut_case+'.pkl', 'wb'))
         elif Case == '2':
             words_list = cPickle.load(open('words_list_2.pkl', 'rb'))
-        # anchor = []
-        # for i in range(N_topic):
-        #     anchor.append([])
+
         anchor = get_anchor()
 
         for j in range(100):
