@@ -13,9 +13,10 @@ dt_string = now.strftime("%m-%d_%H_%M")
 print("date and time =", dt_string)
 print ('Argument List:', str(sys.argv))
 
+'''參數1:分幾類  參數2:source data  參數3:1.'''
 N_topic = int(sys.argv[1])
 source_file = sys.argv[2]
-case = sys.argv[3]
+Case = sys.argv[3]
 
 def remove_punctuation(line):
     # rule = re.compile(u"[^\u4e00-\u9fa5, \u0041-\u005a, \u0060-\u007a]")  # 留下中文和英文
@@ -39,6 +40,13 @@ def cut(rows, stop_word_list, case):
         Label.append(label)
     return words_list, Label
 
+def get_anchor():
+    with open('anchor.txt','r',encoding='utf-8') as f:
+        a = []
+        for line in f:
+            a.append(line.split())
+        return a
+
 
 if __name__ == '__main__':
     with open(source_file) as csvfile:
@@ -46,20 +54,21 @@ if __name__ == '__main__':
         with open('stop_word_corex.txt') as file:
             All_sw = file.read()
             stop_word_list = All_sw.splitlines()
-        if case == '1':
+        if Case == '1':
             cut_case = input('1.jieba or 2.monpa')
             words_list, Label = cut(rows, stop_word_list, cut_case)
             cPickle.dump(words_list, open('words_list_'+cut_case+'.pkl', 'wb'))
-        elif case == '2':
+        elif Case == '2':
             words_list = cPickle.load(open('words_list_2.pkl', 'rb'))
-        anchor = []
-        for i in range(N_topic):
-            anchor.append([])
+        # anchor = []
+        # for i in range(N_topic):
+        #     anchor.append([])
+        anchor = get_anchor()
+
         for j in range(100):
             vectorizer = CountVectorizer(token_pattern='\\b\\w+\\b')  # 原本只使用2個字以上的詞，改為1個字即可使用
             X = vectorizer.fit_transform(words_list)
             words = list(np.asarray(vectorizer.get_feature_names()))
-
             topic_model = ct.Corex(n_hidden=N_topic, words=words, seed=3)
             #topic_model = cPickle.load(open('model_monpa.pkl', 'rb'))
 
@@ -69,8 +78,8 @@ if __name__ == '__main__':
                     t = anchor_words.split()
                     for word in t:
                         anchor[j].append(word)
-                print('本次新增anchor', anchor)
-
+                    print('本次新增anchor', t)
+            print(anchor)
             topic_model.fit(X, words=words, anchors=anchor, anchor_strength=4)  # anchors目前是自己設定
             # cPickle.dump(topic_model, open('model.pkl', 'wb'))
 
